@@ -15,7 +15,11 @@ fun cadastrarCompra(){
     mostrarCaixasDisponiveis()
     val caixaId = lerInteiro("Digite o ID da caixa d'água comprada: ")
 
-    val quantidade = lerInteiro("Quantas unidades foram compradas? ")
+    var quantidade = lerInteiro("Quantas unidades foram compradas? ")
+    while (quantidade <= 0) {
+        println("Quantidade tem que ser maior que zero.")
+        quantidade = lerInteiro("Quantas unidades foram compradas? ")
+    }
 
     val preco = lerDecimal("Digite o preço total da compra: ")
 

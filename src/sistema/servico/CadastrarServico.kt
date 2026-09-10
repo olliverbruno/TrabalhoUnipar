@@ -22,7 +22,14 @@ fun cadastrarServico(){
 
     println("Escolha o tipo de serviço: ")
     TipoServico.entries.forEach { println("${it.ordinal} - ${it.name}") }
-    val tipo = TipoServico.entries[lerInteiro("Número do tipo: ")]
+    var tipo: TipoServico? = null
+    while (tipo == null) {
+        try {
+            tipo = TipoServico.entries[lerInteiro("Número do tipo: ")]
+        } catch (e: IndexOutOfBoundsException) {
+            println("Número inválido, tente novamente.")
+        }
+    }
 
     //só precisa do cpf pra salvar, resto fica vazio mesmo
     //isso aqui eu nao gosto muito - criar cliente/instalador vazio só pra carregar o cpf. daria pra ter uma busca no banco pelo cpf em vez disso

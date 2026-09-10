@@ -53,12 +53,26 @@ fun cadastrarFuncionario(){
 
     println("Escolha o turno: ")
     Turno.entries.forEach { println("${it.ordinal} - ${it.name}") }
-    val turno = Turno.entries[lerInteiro("Número do turno: ")] //aqui ainda quebra se digitar numero fora do intervalo (só protegi cor/material)
+    var turno: Turno? = null
+    while (turno == null) {
+        try {
+            turno = Turno.entries[lerInteiro("Número do turno: ")]
+        } catch (e: IndexOutOfBoundsException) {
+            println("Número inválido, tente novamente.")
+        }
+    }
 
     //aqui entra a divisao em setor que o pdf pede
     println("Escolha o setor: ")
     Habilidade.entries.forEach { println("${it.ordinal} - ${it.name}") }
-    val habilidade = Habilidade.entries[lerInteiro("Número do setor: ")]
+    var habilidade: Habilidade? = null
+    while (habilidade == null) {
+        try {
+            habilidade = Habilidade.entries[lerInteiro("Número do setor: ")]
+        } catch (e: IndexOutOfBoundsException) {
+            println("Número inválido, tente novamente.")
+        }
+    }
 
     JPA().salvar(
         Instalador(

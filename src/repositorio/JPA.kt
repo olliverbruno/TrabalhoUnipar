@@ -1,9 +1,13 @@
 package repositorio
 
+import pessoas.Auditor
 import pessoas.Cliente
+import pessoas.Fornecedor
 import pessoas.Instalador
 import produto.CaixaDaAgua
+import produto.Compra
 import produto.Servico
+import produto.Venda
 import java.sql.Connection
 import java.sql.Date
 import java.sql.DriverManager
@@ -125,6 +129,116 @@ class JPA(
 
             stnt.executeUpdate()
             stnt.close()
+            c!!.close()
+        } catch (e: SQLException) {
+            println("Não  salvou: ${e.printStackTrace()}")
+        }
+    }
+
+    fun salvar(fornecedor: Fornecedor) {
+        try {
+            conectar()
+            val sql = "INSERT INTO fornecedor (cpf, nome, idade, produto_fornecido) VALUES (?, ?, ?, ?)"
+            val stnt = c!!.prepareStatement(sql)
+
+            stnt.setString(1, fornecedor.cpf)
+            stnt.setString(2, fornecedor.nome)
+            stnt.setInt(3, fornecedor.idade)
+            stnt.setString(4, fornecedor.produtoFornecido)
+
+            stnt.executeUpdate()
+            stnt.close()
+            c!!.close()
+        } catch (e: SQLException) {
+            println("Não  salvou: ${e.printStackTrace()}")
+        }
+    }
+
+    fun salvar(auditor: Auditor) {
+        try {
+            conectar()
+            val sql = "INSERT INTO auditor (cpf, nome, idade, registro_profissional) VALUES (?, ?, ?, ?)"
+            val stnt = c!!.prepareStatement(sql)
+
+            stnt.setString(1, auditor.cpf)
+            stnt.setString(2, auditor.nome)
+            stnt.setInt(3, auditor.idade)
+            stnt.setString(4, auditor.registroProfissional)
+
+            stnt.executeUpdate()
+            stnt.close()
+            c!!.close()
+        } catch (e: SQLException) {
+            println("Não  salvou: ${e.printStackTrace()}")
+        }
+    }
+
+    //compra aumenta o estoque da caixa comprada
+    fun salvar(compra: Compra) {
+        try {
+            conectar()
+            val sql = "INSERT INTO compra (fornecedor_cpf, caixa_da_agua_id, quantidade, preco, data_compra) VALUES (?, ?, ?, ?, ?)"
+            val stnt = c!!.prepareStatement(sql)
+
+            stnt.setString(1, compra.fornecedorCpf)
+            stnt.setInt(2, compra.caixaDaAguaId)
+            stnt.setInt(3, compra.quantidade)
+            stnt.setBigDecimal(4, compra.preco)
+            stnt.setDate(5, Date.valueOf(compra.dataCompra))
+
+            stnt.executeUpdate()
+            stnt.close()
+
+            val sqlEstoque = "UPDATE caixa_da_agua SET quantidade = quantidade + ? WHERE id = ?"
+            val stntEstoque = c!!.prepareStatement(sqlEstoque)
+            stntEstoque.setInt(1, compra.quantidade)
+            stntEstoque.setInt(2, compra.caixaDaAguaId)
+            stntEstoque.executeUpdate()
+            stntEstoque.close()
+
+            c!!.close()
+        } catch (e: SQLException) {
+            println("Não  salvou: ${e.printStackTrace()}")
+        }
+    }
+
+    //venda diminui o estoque - confere se tem quantidade suficiente antes de aceitar
+    fun salvar(venda: Venda) {
+        try {
+            conectar()
+
+            val sqlEstoque = "SELECT quantidade FROM caixa_da_agua WHERE id = ?"
+            val stntEstoque = c!!.prepareStatement(sqlEstoque)
+            stntEstoque.setInt(1, venda.caixaDaAguaId)
+            val resultado = stntEstoque.executeQuery()
+            resultado.next()
+            val estoqueAtual = resultado.getInt("quantidade")
+            resultado.close()
+            stntEstoque.close()
+
+            if (estoqueAtual < venda.quantidade) {
+                println("Estoque insuficiente! Só tem $estoqueAtual em estoque.")
+                c!!.close()
+                return
+            }
+
+            val sql = "INSERT INTO venda (cliente_cpf, caixa_da_agua_id, quantidade, preco, data_venda) VALUES (?, ?, ?, ?, ?)"
+            val stnt = c!!.prepareStatement(sql)
+            stnt.setString(1, venda.clienteCpf)
+            stnt.setInt(2, venda.caixaDaAguaId)
+            stnt.setInt(3, venda.quantidade)
+            stnt.setBigDecimal(4, venda.preco)
+            stnt.setDate(5, Date.valueOf(venda.dataVenda))
+            stnt.executeUpdate()
+            stnt.close()
+
+            val sqlAtualizarEstoque = "UPDATE caixa_da_agua SET quantidade = quantidade - ? WHERE id = ?"
+            val stntAtualizar = c!!.prepareStatement(sqlAtualizarEstoque)
+            stntAtualizar.setInt(1, venda.quantidade)
+            stntAtualizar.setInt(2, venda.caixaDaAguaId)
+            stntAtualizar.executeUpdate()
+            stntAtualizar.close()
+
             c!!.close()
         } catch (e: SQLException) {
             println("Não  salvou: ${e.printStackTrace()}")

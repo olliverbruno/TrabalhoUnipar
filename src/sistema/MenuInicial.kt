@@ -1,8 +1,12 @@
 package sistema
 
+import sistema.caixadeagua.cadastrarCompra
 import sistema.caixadeagua.cadastrarNovaCaixa
+import sistema.caixadeagua.cadastrarVenda
 import sistema.caixadeagua.listarCaixa
+import sistema.pessoas.cadastrarAuditor
 import sistema.pessoas.cadastrarCliente
+import sistema.pessoas.cadastrarFornecedor
 import sistema.pessoas.cadastrarFuncionario
 import sistema.pagamentos.pagar
 import sistema.servico.cadastrarServico
@@ -18,6 +22,10 @@ fun menuInicial() {
         println("4 - CADASTRAR FUNCIONARIO")
         println("5 - CADASTRAR SERVICO")
         println("6 - REGISTRAR MOVIMENTACAO")
+        println("7 - CADASTRAR FORNECEDOR")
+        println("8 - CADASTRAR AUDITOR")
+        println("9 - REGISTRAR COMPRA (aumenta estoque)")
+        println("10 - REGISTRAR VENDA (diminui estoque)")
         val op = readln()
 
 
@@ -35,6 +43,10 @@ fun menuInicial() {
                 "4" -> cadastrarFuncionario()
                 "5" -> cadastrarServico()
                 "6" -> pagar()
+                "7" -> cadastrarFornecedor()
+                "8" -> cadastrarAuditor()
+                "9" -> cadastrarCompra()
+                "10" -> cadastrarVenda()
                 else -> println("OPÇÃO INVÁLIDA")
             }
 

@@ -2,12 +2,16 @@ package sistema.pessoas
 
 import enumeradores.Habilidade
 import enumeradores.Turno
+import pessoas.Auditor
 import pessoas.Cliente
+import pessoas.Fornecedor
 import pessoas.Instalador
 import repositorio.JPA
+import sistema.lerCnpj
 import sistema.lerCpf
 import sistema.lerDecimal
 import sistema.lerInteiro
+import java.math.BigDecimal
 
 //nao tem opção de editar funcionario/cliente no menu - se mudar de setor, teria que mexer direto no banco
 fun cadastrarCliente(){
@@ -41,7 +45,11 @@ fun cadastrarFuncionario(){
 
     val idade = lerInteiro("Digite a idade: ")
 
-    val salario = lerDecimal("Digite o salário: ") //só confere se é numero, nao confere se é negativo
+    var salario = lerDecimal("Digite o salário: ")
+    while (salario < BigDecimal.ZERO) {
+        println("Salário não pode ser negativo.")
+        salario = lerDecimal("Digite o salário: ")
+    }
 
     println("Escolha o turno: ")
     Turno.entries.forEach { println("${it.ordinal} - ${it.name}") }
@@ -60,6 +68,49 @@ fun cadastrarFuncionario(){
             salario = salario,
             turno = turno,
             habilidade = habilidade
+        )
+    )
+}
+
+//fornecedor usa cnpj (14 numeros) em vez de cpf, por isso o lerCnpj em vez de lerCpf
+fun cadastrarFornecedor(){
+    val cnpj = lerCnpj("Digite o CNPJ do fornecedor (14 números): ")
+
+    println("Digite o nome: ")
+    val nome = readln()
+
+    val idade = lerInteiro("Digite a idade: ")
+
+    println("Digite o produto fornecido: ")
+    val produtoFornecido = readln()
+
+    JPA().salvar(
+        Fornecedor(
+            nome = nome,
+            cpf = cnpj,
+            idade = idade,
+            produtoFornecido = produtoFornecido
+        )
+    )
+}
+
+fun cadastrarAuditor(){
+    val cpf = lerCpf("Digite o CPF do auditor (11 números): ")
+
+    println("Digite o nome: ")
+    val nome = readln()
+
+    val idade = lerInteiro("Digite a idade: ")
+
+    println("Digite o registro profissional: ")
+    val registroProfissional = readln()
+
+    JPA().salvar(
+        Auditor(
+            nome = nome,
+            cpf = cpf,
+            idade = idade,
+            registroProfissional = registroProfissional
         )
     )
 }

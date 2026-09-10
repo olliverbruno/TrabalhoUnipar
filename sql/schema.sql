@@ -52,3 +52,41 @@ CREATE TABLE movimentacao (
     recebedor character varying(150) NOT NULL,
     responsavel character varying(150) NOT NULL
 );
+
+CREATE TABLE fornecedor (
+    cpf character(14) NOT NULL,
+    nome character varying(150) NOT NULL,
+    idade integer NOT NULL,
+    produto_fornecido character varying(150) NOT NULL,
+    CONSTRAINT fornecedor_pkey PRIMARY KEY (cpf)
+);
+
+CREATE TABLE auditor (
+    cpf character(11) NOT NULL,
+    nome character varying(150) NOT NULL,
+    idade integer NOT NULL,
+    registro_profissional character varying(50) NOT NULL,
+    CONSTRAINT auditor_pkey PRIMARY KEY (cpf)
+);
+
+CREATE TABLE compra (
+    id serial PRIMARY KEY,
+    fornecedor_cpf character(14) NOT NULL,
+    caixa_da_agua_id integer NOT NULL,
+    quantidade integer NOT NULL,
+    preco numeric(12,2) NOT NULL,
+    data_compra date NOT NULL,
+    CONSTRAINT compra_fornecedor_cpf_fkey FOREIGN KEY (fornecedor_cpf) REFERENCES fornecedor(cpf),
+    CONSTRAINT compra_caixa_da_agua_id_fkey FOREIGN KEY (caixa_da_agua_id) REFERENCES caixa_da_agua(id)
+);
+
+CREATE TABLE venda (
+    id serial PRIMARY KEY,
+    cliente_cpf character(11) NOT NULL,
+    caixa_da_agua_id integer NOT NULL,
+    quantidade integer NOT NULL,
+    preco numeric(12,2) NOT NULL,
+    data_venda date NOT NULL,
+    CONSTRAINT venda_cliente_cpf_fkey FOREIGN KEY (cliente_cpf) REFERENCES cliente(cpf),
+    CONSTRAINT venda_caixa_da_agua_id_fkey FOREIGN KEY (caixa_da_agua_id) REFERENCES caixa_da_agua(id)
+);

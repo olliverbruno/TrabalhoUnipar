@@ -15,6 +15,18 @@ fun lerCpf(mensagem: String): String {
     return cpf
 }
 
+fun validarCnpj(cnpj: String): Boolean = Regex("^\\d{14}$").matches(cnpj) //cnpj tem 14 numeros
+
+fun lerCnpj(mensagem: String): String {
+    println(mensagem)
+    var cnpj = readln()
+    while (!validarCnpj(cnpj)) {
+        println("CNPJ inválido, digite 14 números sem pontos ou traços.")
+        cnpj = readln()
+    }
+    return cnpj
+}
+
 fun lerInteiro(mensagem: String): Int {
     println(mensagem)
     var valor = readln().toIntOrNull() //devolve null se nao for numero

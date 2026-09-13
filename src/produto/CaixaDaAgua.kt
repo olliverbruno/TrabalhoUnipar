@@ -12,7 +12,7 @@ class CaixaDaAgua(
     val modelo : String,
     val dimensao : MutableList<Double>,
     val cor : Cor,
-    val material : Material = Material.FIBRA_DE_VIDRO,
+    val material : Material,
     val formato : String,
     val preco : BigDecimal,
     val quantidade : Int = 1 //estoque

@@ -3,7 +3,7 @@ package repositorio
 import pessoas.Auditor
 import pessoas.Cliente
 import pessoas.Fornecedor
-import pessoas.Instalador
+import pessoas.Funcionario
 import produto.CaixaDaAgua
 import produto.Compra
 import produto.Servico
@@ -92,11 +92,11 @@ class JPA(
         }
     }
 
-    //habilidade = setor do funcionario
-    fun salvar(funcionario: Instalador) {
+    //setor = setor do funcionario
+    fun salvar(funcionario: Funcionario) {
         try {
             conectar()
-            val sql = "INSERT INTO funcionario (cpf, nome, idade, salario, turno, habilidade) VALUES (?, ?, ?, ?, ?, ?)"
+            val sql = "INSERT INTO funcionario (cpf, nome, idade, salario, turno, setor) VALUES (?, ?, ?, ?, ?, ?)"
             val stnt = c!!.prepareStatement(sql)
 
             stnt.setString(1, funcionario.cpf)
@@ -104,7 +104,7 @@ class JPA(
             stnt.setInt(3, funcionario.idade)
             stnt.setBigDecimal(4, funcionario.salario)
             stnt.setString(5, funcionario.turno.name)
-            stnt.setString(6, funcionario.habilidade.name)
+            stnt.setString(6, funcionario.setor.name)
 
             stnt.executeUpdate()
             stnt.close()
@@ -122,7 +122,7 @@ class JPA(
             val stnt = c!!.prepareStatement(sql)
 
             stnt.setString(1, servico.cliente.cpf)
-            stnt.setString(2, servico.instalador.cpf)
+            stnt.setString(2, servico.funcionario.cpf)
             stnt.setBigDecimal(3, servico.preco)
             stnt.setDate(4, Date.valueOf(servico.dataInstalacao))
             stnt.setString(5, servico.tipo.name)

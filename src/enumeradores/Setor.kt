@@ -1,5 +1,5 @@
 package enumeradores
 
-enum class Habilidade {
+enum class Setor {
     INSTALACAO, FINANCEIRO, ADMINISTRATIVO, LOGISTICA
 }

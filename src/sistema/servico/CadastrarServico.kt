@@ -1,10 +1,10 @@
 package sistema.servico
 
-import enumeradores.Habilidade
+import enumeradores.Setor
 import enumeradores.TipoServico
 import enumeradores.Turno
 import pessoas.Cliente
-import pessoas.Instalador
+import pessoas.Funcionario
 import produto.Servico
 import repositorio.JPA
 import sistema.lerCpf
@@ -13,7 +13,6 @@ import sistema.lerInteiro
 import java.math.BigDecimal
 import java.time.LocalDate
 
-//cliente e funcionario tem que existir antes (fk)
 fun cadastrarServico(){
     val cpfCliente = lerCpf("Digite o CPF do cliente já cadastrado: ")
     val cpfInstalador = lerCpf("Digite o CPF do funcionário já cadastrado: ")
@@ -31,9 +30,7 @@ fun cadastrarServico(){
         }
     }
 
-    //só precisa do cpf pra salvar, resto fica vazio mesmo
-    //isso aqui eu nao gosto muito - criar cliente/instalador vazio só pra carregar o cpf. daria pra ter uma busca no banco pelo cpf em vez disso
-    //cadastrar servico e registrar movimentacao (menu 6) sao 2 opções separadas - nao é automatico, tem que fazer os 2
+
     val servico = Servico()
     servico.cliente = Cliente(
         nomeCliente = "",
@@ -42,13 +39,13 @@ fun cadastrarServico(){
         dividasAbertas = false,
         parcelasAPagar = mutableListOf()
     )
-    servico.instalador = Instalador(
+    servico.funcionario = Funcionario(
         nome = "",
         cpf = cpfInstalador,
         idade = 0,
         salario = BigDecimal.ZERO,
         turno = Turno.NOTURNO,
-        habilidade = Habilidade.INSTALACAO
+        setor = Setor.INSTALACAO
     )
     servico.preco = preco
     servico.dataInstalacao = LocalDate.now()

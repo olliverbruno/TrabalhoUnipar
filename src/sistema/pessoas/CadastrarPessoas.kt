@@ -1,11 +1,11 @@
 package sistema.pessoas
 
-import enumeradores.Habilidade
+import enumeradores.Setor
 import enumeradores.Turno
 import pessoas.Auditor
 import pessoas.Cliente
 import pessoas.Fornecedor
-import pessoas.Instalador
+import pessoas.Funcionario
 import repositorio.JPA
 import sistema.lerCnpj
 import sistema.lerCpf
@@ -13,7 +13,6 @@ import sistema.lerDecimal
 import sistema.lerInteiro
 import java.math.BigDecimal
 
-//nao tem opção de editar funcionario/cliente no menu - se mudar de setor, teria que mexer direto no banco
 fun cadastrarCliente(){
     val cpf = lerCpf("Digite o CPF do cliente (11 números): ")
 
@@ -22,19 +21,25 @@ fun cadastrarCliente(){
 
     val idade = lerInteiro("Digite a idade: ")
 
-    println("Possui dívidas em aberto? (S/N): ")
-    val dividasAbertas = readln().equals("S", ignoreCase = true)
+    var dividas : String
+    do {
+        print("Possui dividas em aberto? (S/N): ")
+        dividas = readln().trim().lowercase()
+    } while (dividas != "s" && dividas != "n")
+
+    val possuiDividas = (dividas == "s")
 
     JPA().salvar(
         Cliente(
             nomeCliente = nome,
             cpfCliente = cpf,
             idadeCliente = idade,
-            dividasAbertas = dividasAbertas,
+            dividasAbertas = possuiDividas, // Passando o Boolean correto aqui
             parcelasAPagar = mutableListOf()
         )
     )
 }
+
 
 //usa a classe Instalador que ja existia
 fun cadastrarFuncionario(){
@@ -62,36 +67,37 @@ fun cadastrarFuncionario(){
         }
     }
 
-    //aqui entra a divisao em setor que o pdf pede
     println("Escolha o setor: ")
-    Habilidade.entries.forEach { println("${it.ordinal} - ${it.name}") }
-    var habilidade: Habilidade? = null
-    while (habilidade == null) {
+    Setor.entries.forEach { println("${it.ordinal} - ${it.name}") }
+    var setor: Setor? = null
+    while (setor == null) {
         try {
-            habilidade = Habilidade.entries[lerInteiro("Número do setor: ")]
+            setor = Setor.entries[lerInteiro("Número do setor: ")]
         } catch (e: IndexOutOfBoundsException) {
             println("Número inválido, tente novamente.")
         }
     }
 
     JPA().salvar(
-        Instalador(
+        Funcionario(
             nome = nome,
             cpf = cpf,
             idade = idade,
             salario = salario,
             turno = turno,
-            habilidade = habilidade
+            setor = setor
         )
     )
 }
 
-//fornecedor usa cnpj (14 numeros) em vez de cpf, por isso o lerCnpj em vez de lerCpf
 fun cadastrarFornecedor(){
     val cnpj = lerCnpj("Digite o CNPJ do fornecedor (14 números): ")
 
-    println("Digite o nome: ")
-    val nome = readln()
+    var nome: String
+    do{
+        print("Digite o nome: ")
+        nome = readln().toString()
+    } while (nome.isEmpty())
 
     val idade = lerInteiro("Digite a idade: ")
 
